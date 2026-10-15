@@ -58,4 +58,7 @@ public static class ErrorCodes
 
     public const string FutureLesson = "FUTURE_LESSON";
     public const string FutureLessonMessage = "אי אפשר לסמן נוכחות לשיעור שעוד לא התקיים";
+
+    public const string GroupHasStudents = "GROUP_HAS_STUDENTS";
+    public const string GroupHasStudentsMessage = "יש בקבוצה תלמידות רשומות. יש לבטל את הרישום שלהן קודם";
 }

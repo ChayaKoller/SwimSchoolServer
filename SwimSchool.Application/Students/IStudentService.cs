@@ -14,4 +14,6 @@ public interface IStudentService
     Task<StudentDetailsDto> UpdateAsync(int id, UpdateStudentRequest request, CancellationToken ct = default);
 
     Task TransferAsync(int id, TransferStudentRequest request, CancellationToken ct = default);
+
+    Task DeleteAsync(int id, CancellationToken ct = default);
 }

@@ -12,4 +12,6 @@ public interface IGroupService
     Task<GroupDetailsDto> CreateAsync(CreateGroupRequest request, CancellationToken ct = default);
 
     Task<GroupDto> UpdateAsync(int id, UpdateGroupRequest request, CancellationToken ct = default);
+
+    Task DeleteAsync(int id, uint version, CancellationToken ct = default);
 }

@@ -53,10 +53,21 @@ public class StudentRepository(SwimSchoolDbContext db) : IStudentRepository
     public Task<Student?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId).FirstOrDefaultAsync(s => s.Id == id, ct);
 
+    public Task<Student?> FindForDeleteAsync(int id, int teacherId, CancellationToken ct = default) =>
+        ForTeacher(teacherId)
+            .Include(s => s.Enrollments)
+                .ThenInclude(e => e.Group)
+            .FirstOrDefaultAsync(s => s.Id == id, ct);
+
     public Task<bool> IdentityNumberExistsAsync(string identityNumber, CancellationToken ct = default) =>
         db.Students.AnyAsync(s => s.IdentityNumber == identityNumber, ct);
 
+    public Task<bool> HasReportsAsync(int studentId, CancellationToken ct = default) =>
+        db.Reports.AnyAsync(r => r.StudentId == studentId, ct);
+
     public void Add(Student student) => db.Students.Add(student);
+
+    public void Remove(Student student) => db.Students.Remove(student);
 
     private IQueryable<Student> ForTeacher(int teacherId) =>
         db.Students.Where(s => s.ResponsibleTeacherId == teacherId);

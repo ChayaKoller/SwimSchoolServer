@@ -1,6 +1,7 @@
 using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
+using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Reports.Dtos;
 using SwimSchool.Application.Students;
 using SwimSchool.Domain.Entities;
@@ -16,6 +17,29 @@ public class ReportService(
     IDateTimeProvider clock,
     IMapper mapper) : IReportService
 {
+    // Reports follow the student: ownership is the student's current responsible teacher
+    public async Task<PagedResult<ReportDto>> GetAsync(ReportFilter filter, CancellationToken ct = default)
+    {
+        DateTime? fromUtc = filter.FromDate is DateOnly from
+            ? clock.IsraelToUtc(from.ToDateTime(TimeOnly.MinValue))
+            : null;
+
+        // Exclusive: start of the day after ToDate, so the whole ToDate is included
+        DateTime? toUtc = filter.ToDate is DateOnly to
+            ? clock.IsraelToUtc(to.AddDays(1).ToDateTime(TimeOnly.MinValue))
+            : null;
+
+        var page = await reports.GetAsync(me.OwningTeacherId, filter, fromUtc, toUtc, ct);
+
+        return new PagedResult<ReportDto>
+        {
+            Items = mapper.Map<List<ReportDto>>(page.Items),
+            TotalCount = page.TotalCount,
+            Page = page.Page,
+            PageSize = page.PageSize
+        };
+    }
+
     public async Task<ReportDto> CreateAsync(CreateReportRequest request, CancellationToken ct = default)
     {
         var student = await students.GetByIdAsync(request.StudentId!.Value, me.OwningTeacherId, ct)

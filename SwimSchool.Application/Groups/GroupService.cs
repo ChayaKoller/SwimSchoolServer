@@ -74,6 +74,29 @@ public class GroupService(
         return mapper.Map<GroupDto>(group);
     }
 
+    // No enrollments ever: real delete with its lessons. Otherwise archive
+    public async Task DeleteAsync(int id, uint version, CancellationToken ct = default)
+    {
+        if (!me.IsTeacher)
+            throw new ForbiddenException(ErrorCodes.Forbidden, ErrorCodes.ForbiddenMessage);
+
+        var group = await groups.FindForDeleteAsync(id, me.OwningTeacherId, ct)
+            ?? throw NotFound();
+
+        if (group.Version != version)
+            throw new ConflictException(ErrorCodes.DataChanged, ErrorCodes.DataChangedMessage);
+
+        if (group.Enrollments.Any(e => e.IsActive))
+            throw new ConflictException(ErrorCodes.GroupHasStudents, ErrorCodes.GroupHasStudentsMessage);
+
+        if (group.Enrollments.Count == 0)
+            groups.Remove(group);
+        else
+            group.IsActive = false;
+
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+
     private static NotFoundException NotFound() =>
         new(ErrorCodes.GroupNotFound, ErrorCodes.GroupNotFoundMessage);
 }

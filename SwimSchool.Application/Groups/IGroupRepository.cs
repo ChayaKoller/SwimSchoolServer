@@ -19,5 +19,11 @@ public interface IGroupRepository
     // Tracked; includes Lessons and active Enrollments with their Student and Attendances
     Task<Group?> GetForAttendanceAsync(int groupId, int teacherId, CancellationToken ct = default);
 
+    // Tracked; includes Lessons and all Enrollments (active and inactive)
+    Task<Group?> FindForDeleteAsync(int id, int teacherId, CancellationToken ct = default);
+
     void Add(Group group);
+
+    // Removes the group's lessons first, then the group
+    void Remove(Group group);
 }

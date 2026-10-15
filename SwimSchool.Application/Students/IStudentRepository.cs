@@ -13,7 +13,14 @@ public interface IStudentRepository
     // Tracked
     Task<Student?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default);
 
+    // Tracked; includes all Enrollments (active and inactive) with their Group
+    Task<Student?> FindForDeleteAsync(int id, int teacherId, CancellationToken ct = default);
+
     Task<bool> IdentityNumberExistsAsync(string identityNumber, CancellationToken ct = default);
 
+    Task<bool> HasReportsAsync(int studentId, CancellationToken ct = default);
+
     void Add(Student student);
+
+    void Remove(Student student);
 }

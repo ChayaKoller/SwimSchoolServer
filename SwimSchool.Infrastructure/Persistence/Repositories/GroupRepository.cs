@@ -59,7 +59,20 @@ public class GroupRepository(SwimSchoolDbContext db) : IGroupRepository
             .AsSplitQuery()
             .FirstOrDefaultAsync(g => g.Id == groupId, ct);
 
+    public Task<Group?> FindForDeleteAsync(int id, int teacherId, CancellationToken ct = default) =>
+        ForTeacher(teacherId)
+            .Include(g => g.Lessons)
+            .Include(g => g.Enrollments)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Id == id, ct);
+
     public void Add(Group group) => db.Groups.Add(group);
+
+    public void Remove(Group group)
+    {
+        db.Lessons.RemoveRange(group.Lessons);
+        db.Groups.Remove(group);
+    }
 
     private IQueryable<Group> ForTeacher(int teacherId) =>
         db.Groups.Where(g => g.TeacherId == teacherId);

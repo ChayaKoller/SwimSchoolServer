@@ -81,6 +81,33 @@ public class StudentService(
         await unitOfWork.SaveChangesAsync(ct);
     }
 
+    // No history: real delete. Otherwise archive and release active spots; history is kept
+    public async Task DeleteAsync(int id, CancellationToken ct = default)
+    {
+        if (!me.IsTeacher)
+            throw new ForbiddenException(ErrorCodes.Forbidden, ErrorCodes.ForbiddenMessage);
+
+        var student = await students.FindForDeleteAsync(id, me.OwningTeacherId, ct)
+            ?? throw NotFound();
+
+        if (student.Enrollments.Count == 0 && !await students.HasReportsAsync(student.Id, ct))
+        {
+            students.Remove(student);
+        }
+        else
+        {
+            student.IsActive = false;
+
+            foreach (var enrollment in student.Enrollments.Where(e => e.IsActive))
+            {
+                enrollment.IsActive = false;
+                enrollment.Group.ReleaseSpot();
+            }
+        }
+
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+
     private static NotFoundException NotFound() =>
         new(ErrorCodes.StudentNotFound, ErrorCodes.StudentNotFoundMessage);
 }
