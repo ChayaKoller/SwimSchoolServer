@@ -1,7 +1,10 @@
 using AutoMapper.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using SwimSchool.Application.Attendance;
+using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Groups;
 using SwimSchool.Application.Lessons;
+using SwimSchool.Application.Reports;
 using SwimSchool.Application.Students;
 using SwimSchool.Application.Teachers;
 
@@ -20,6 +23,9 @@ public static class DependencyInjection
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<ITeacherService, TeacherService>();
+        services.AddScoped<IEnrollmentService, EnrollmentService>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return services;
     }

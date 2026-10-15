@@ -16,5 +16,8 @@ public interface IGroupRepository
     // Tracked
     Task<Group?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default);
 
+    // Tracked; includes Lessons and active Enrollments with their Student and Attendances
+    Task<Group?> GetForAttendanceAsync(int groupId, int teacherId, CancellationToken ct = default);
+
     void Add(Group group);
 }

@@ -49,6 +49,16 @@ public class GroupRepository(SwimSchoolDbContext db) : IGroupRepository
     public Task<Group?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId).FirstOrDefaultAsync(g => g.Id == id, ct);
 
+    public Task<Group?> GetForAttendanceAsync(int groupId, int teacherId, CancellationToken ct = default) =>
+        ForTeacher(teacherId)
+            .Include(g => g.Lessons)
+            .Include(g => g.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Student)
+            .Include(g => g.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Attendances)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Id == groupId, ct);
+
     public void Add(Group group) => db.Groups.Add(group);
 
     private IQueryable<Group> ForTeacher(int teacherId) =>

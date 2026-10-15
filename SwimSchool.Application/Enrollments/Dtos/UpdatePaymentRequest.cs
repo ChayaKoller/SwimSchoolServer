@@ -6,4 +6,7 @@ public sealed record UpdatePaymentRequest
 {
     [Required, Range(0, double.MaxValue)]
     public decimal? AmountPaid { get; init; }
+
+    [Range(0, double.MaxValue)]
+    public decimal? AmountDue { get; init; }
 }

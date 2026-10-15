@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SwimSchool.Application.Common.Interfaces;
+using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Groups;
 using SwimSchool.Application.Lessons;
+using SwimSchool.Application.Reports;
 using SwimSchool.Application.Students;
 using SwimSchool.Application.Teachers;
 using SwimSchool.Infrastructure.Persistence;
@@ -22,6 +24,8 @@ public static class DependencyInjection
         services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<ILessonRepository, LessonRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 

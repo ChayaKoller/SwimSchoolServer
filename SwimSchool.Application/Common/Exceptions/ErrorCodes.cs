@@ -31,4 +31,31 @@ public static class ErrorCodes
 
     public const string LessonHasAttendance = "LESSON_HAS_ATTENDANCE";
     public const string LessonHasAttendanceMessage = "אי אפשר לשנות או למחוק שיעור שכבר סומנה לו נוכחות";
+
+    public const string EnrollmentNotFound = "ENROLLMENT_NOT_FOUND";
+    public const string EnrollmentNotFoundMessage = "הרישום לא נמצא";
+
+    public const string ReportNotFound = "REPORT_NOT_FOUND";
+    public const string ReportNotFoundMessage = "הדוח לא נמצא";
+
+    public const string StudentNotInGroup = "STUDENT_NOT_IN_GROUP";
+    public const string StudentNotInGroupMessage = "התלמידה לא רשומה לקבוצה הזו";
+
+    public const string PaymentAboveDue = "PAYMENT_ABOVE_DUE";
+    public const string PaymentAboveDueMessage = "הסכום ששולם גבוה מהסכום לתשלום";
+
+    public const string GroupInactive = "GROUP_INACTIVE";
+    public const string GroupInactiveMessage = "הקבוצה לא פעילה";
+
+    public const string AlreadyEnrolled = "ALREADY_ENROLLED";
+    public const string AlreadyEnrolledMessage = "התלמידה כבר רשומה לקבוצה הזו";
+
+    public const string GroupFull = "GROUP_FULL";
+    public const string GroupFullMessage = "הקבוצה מלאה";
+
+    public const string SpotTaken = "SPOT_TAKEN";
+    public const string SpotTakenMessage = "המקום נתפס הרגע. נא לרענן ולנסות שוב";
+
+    public const string FutureLesson = "FUTURE_LESSON";
+    public const string FutureLessonMessage = "אי אפשר לסמן נוכחות לשיעור שעוד לא התקיים";
 }
