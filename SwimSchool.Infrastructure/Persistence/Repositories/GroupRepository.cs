@@ -37,6 +37,15 @@ public class GroupRepository(SwimSchoolDbContext db) : IGroupRepository
     public Task<Group?> GetByIdAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId).AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, ct);
 
+    public Task<Group?> GetDetailsAsync(int id, int teacherId, CancellationToken ct = default) =>
+        ForTeacher(teacherId)
+            .AsNoTracking()
+            .Include(g => g.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Student)
+            .Include(g => g.Lessons)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Id == id, ct);
+
     public Task<Group?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId).FirstOrDefaultAsync(g => g.Id == id, ct);
 

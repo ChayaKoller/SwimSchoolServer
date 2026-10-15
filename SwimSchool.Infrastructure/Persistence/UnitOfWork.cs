@@ -14,7 +14,7 @@ public class UnitOfWork(SwimSchoolDbContext db) : IUnitOfWork
         }
         catch (DbUpdateConcurrencyException)
         {
-            throw new ConflictException("The data was changed by someone else. Please refresh and try again.");
+            throw new ConflictException(ErrorCodes.DataChanged, ErrorCodes.DataChangedMessage);
         }
     }
 }

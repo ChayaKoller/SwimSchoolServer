@@ -10,6 +10,9 @@ public interface IGroupRepository
     // No tracking
     Task<Group?> GetByIdAsync(int id, int teacherId, CancellationToken ct = default);
 
+    // No tracking; includes active Enrollments with their Student, and Lessons
+    Task<Group?> GetDetailsAsync(int id, int teacherId, CancellationToken ct = default);
+
     // Tracked
     Task<Group?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default);
 

@@ -34,6 +34,9 @@ public class StudentRepository(SwimSchoolDbContext db) : IStudentRepository
                 .Count(a => !a.WasPresent) > absentMoreThan);
 
         return await query
+            .Include(s => s.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Attendances)
+            .AsSplitQuery()
             .OrderBy(s => s.FullName)
             .ThenBy(s => s.Id)
             .ToPagedAsync(filter.Page, filter.PageSize, ct);
@@ -42,6 +45,7 @@ public class StudentRepository(SwimSchoolDbContext db) : IStudentRepository
     public Task<Student?> GetByIdAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId)
             .AsNoTracking()
+            .Include(s => s.ResponsibleTeacher)
             .Include(s => s.Enrollments.Where(e => e.IsActive))
                 .ThenInclude(e => e.Group)
             .FirstOrDefaultAsync(s => s.Id == id, ct);
