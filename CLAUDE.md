@@ -15,7 +15,7 @@
   - DbContext, Configurations, Migrations, repository implementations and the DevelopmentDataSeeder.
   - Implementations of QuestPDF, JWT and password hashing.
   - Translates DbUpdateConcurrencyException to the Application ConflictException.
-  - DI entry point: `AddInfrastructure(connectionString)`.
+  - DI entry point: `AddInfrastructure(IConfiguration)`: reads ConnectionStrings:Default and the Jwt section.
 - **SwimSchool.API (Presentation):** references Application and Infrastructure.
   - Thin controllers that call Application services only, returning `ActionResult<T>`.
   - Middleware, NLog and Swagger (Development only), and the ICurrentUser implementation (reads JWT claims).
