@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using SwimSchool.API.Development;
+using SwimSchool.API.Middleware;
+using SwimSchool.API.Validation;
 using SwimSchool.Application;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Infrastructure;
@@ -11,7 +13,10 @@ builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("De
     ?? throw new InvalidOperationException("Missing connection string 'Default'"));
 
 builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+    .ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ValidationResponseFactory.Create);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -24,6 +29,10 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.Services.GetRequiredService<AutoMapper.IMapper>().ConfigurationProvider.AssertConfigurationIsValid();
@@ -34,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+// Stage 9: app.UseAuthentication(); app.UseAuthorization();
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.Run();

@@ -11,14 +11,14 @@ public class ReportsController(IReportService reports) : ControllerBase
 {
     [HttpGet("api/reports")]
     [ProducesResponseType(typeof(PagedResult<ReportDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedResult<ReportDto>>> Get([FromQuery] ReportFilter filter, CancellationToken ct) =>
         Ok(await reports.GetAsync(filter, ct));
 
     [HttpPost("api/reports")]
     [ProducesResponseType(typeof(ReportDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ReportDto>> Create([FromBody] CreateReportRequest request, CancellationToken ct)
     {
         var report = await reports.CreateAsync(request, ct);
@@ -32,7 +32,7 @@ public class ReportsController(IReportService reports) : ControllerBase
 
     [HttpGet("api/reports/{id:int}")]
     [ProducesResponseType(typeof(ReportDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ReportDto>> GetById([FromRoute] int id, CancellationToken ct) =>
         Ok(await reports.GetByIdAsync(id, ct));
 }

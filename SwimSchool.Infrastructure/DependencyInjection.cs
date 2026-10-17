@@ -29,6 +29,8 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 
+        services.AddHealthChecks().AddDbContextCheck<SwimSchoolDbContext>("database");
+
         return services;
     }
 }

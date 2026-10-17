@@ -61,4 +61,13 @@ public static class ErrorCodes
 
     public const string GroupHasStudents = "GROUP_HAS_STUDENTS";
     public const string GroupHasStudentsMessage = "יש בקבוצה תלמידות רשומות. יש לבטל את הרישום שלהן קודם";
+
+    public const string DomainRule = "DOMAIN_RULE";
+    public const string DomainRuleMessage = "הפעולה אינה אפשרית במצב הנוכחי";
+
+    public const string ValidationFailed = "VALIDATION_FAILED";
+    public const string ValidationFailedMessage = "יש שדות שלא מולאו נכון";
+
+    public const string ServerError = "SERVER_ERROR";
+    public const string ServerErrorMessage = "אירעה שגיאה. נסי שוב מאוחר יותר";
 }

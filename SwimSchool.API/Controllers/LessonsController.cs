@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Lessons;
 using SwimSchool.Application.Lessons.Dtos;
 
@@ -15,24 +16,24 @@ public class LessonsController(ILessonService lessons) : ControllerBase
 
     [HttpPost("api/groups/{groupId:int}/lessons")]
     [ProducesResponseType(typeof(List<LessonDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<LessonDto>>> Add(
         [FromRoute] int groupId, [FromBody] AddLessonsRequest request, CancellationToken ct) =>
         Ok(await lessons.AddAsync(groupId, request, ct));
 
     [HttpPut("api/lessons/{id:int}")]
     [ProducesResponseType(typeof(LessonDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<LessonDto>> Update(
         [FromRoute] int id, [FromBody] UpdateLessonRequest request, CancellationToken ct) =>
         Ok(await lessons.UpdateAsync(id, request, ct));
 
     [HttpDelete("api/lessons/{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete([FromRoute] int id, CancellationToken ct)
     {
         await lessons.DeleteAsync(id, ct);

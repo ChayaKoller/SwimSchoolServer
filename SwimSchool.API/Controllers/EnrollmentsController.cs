@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Enrollments.Dtos;
 
@@ -11,9 +12,9 @@ public class EnrollmentsController(IEnrollmentService enrollments) : ControllerB
 {
     [HttpPost]
     [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<EnrollmentDto>> Enroll([FromBody] EnrollRequest request, CancellationToken ct)
     {
         var enrollment = await enrollments.EnrollAsync(request, ct);
@@ -22,22 +23,22 @@ public class EnrollmentsController(IEnrollmentService enrollments) : ControllerB
 
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<EnrollmentDto>> GetById([FromRoute] int id, CancellationToken ct) =>
         Ok(await enrollments.GetByIdAsync(id, ct));
 
     [HttpPut("{id:int}/payment")]
     [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<EnrollmentDto>> UpdatePayment(
         [FromRoute] int id, [FromBody] UpdatePaymentRequest request, CancellationToken ct) =>
         Ok(await enrollments.UpdatePaymentAsync(id, request, ct));
 
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult> Cancel([FromRoute] int id, CancellationToken ct)
     {
         await enrollments.CancelAsync(id, ct);
