@@ -1,12 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SwimSchool.Application.Attendance;
 using SwimSchool.Application.Attendance.Dtos;
 using SwimSchool.Application.Common.Models;
+using SwimSchool.Domain.Enums;
 
 namespace SwimSchool.API.Controllers;
 
 [ApiController]
 [Produces("application/json")]
+[Authorize(Roles = nameof(UserRole.Teacher))]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
 public class AttendanceController(IAttendanceService attendance) : ControllerBase
 {
     [HttpGet("api/lessons/{lessonId:int}/attendance")]

@@ -18,9 +18,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.Phone).HasMaxLength(20).IsRequired();
         builder.Property(u => u.PasswordHash).IsRequired();
+        builder.Property(u => u.SecurityStamp).HasMaxLength(32).IsRequired();
         builder.Property(u => u.Role).HasConversion<int>();
 
         builder.Ignore(u => u.OwningTeacherId);
+        builder.Ignore(u => u.CanSignIn);
 
         builder.HasOne(u => u.Teacher)
             .WithMany(t => t.Secretaries)

@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Groups;
 using SwimSchool.Application.Groups.Dtos;
+using SwimSchool.Domain.Enums;
 
 namespace SwimSchool.API.Controllers;
 
 [ApiController]
 [Route("api/groups")]
 [Produces("application/json")]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
 public class GroupsController(IGroupService groups) : ControllerBase
 {
     [HttpGet]
@@ -40,6 +43,7 @@ public class GroupsController(IGroupService groups) : ControllerBase
         [FromRoute] int id, [FromBody] UpdateGroupRequest request, CancellationToken ct) =>
         Ok(await groups.UpdateAsync(id, request, ct));
 
+    [Authorize(Roles = nameof(UserRole.Teacher))]
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]

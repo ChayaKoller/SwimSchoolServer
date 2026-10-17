@@ -8,6 +8,7 @@ namespace SwimSchool.API.Controllers;
 [ApiController]
 [Route("api/enrollments")]
 [Produces("application/json")]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
 public class EnrollmentsController(IEnrollmentService enrollments) : ControllerBase
 {
     [HttpPost]

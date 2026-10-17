@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Students;
 using SwimSchool.Application.Students.Dtos;
+using SwimSchool.Domain.Enums;
 
 namespace SwimSchool.API.Controllers;
 
 [ApiController]
 [Route("api/students")]
 [Produces("application/json")]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
 public class StudentsController(IStudentService students) : ControllerBase
 {
     [HttpGet]
@@ -42,6 +45,7 @@ public class StudentsController(IStudentService students) : ControllerBase
         [FromRoute] int id, [FromBody] UpdateStudentRequest request, CancellationToken ct) =>
         Ok(await students.UpdateAsync(id, request, ct));
 
+    [Authorize(Roles = nameof(UserRole.Teacher))]
     [HttpPost("{id:int}/transfer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
@@ -54,6 +58,7 @@ public class StudentsController(IStudentService students) : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = nameof(UserRole.Teacher))]
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]

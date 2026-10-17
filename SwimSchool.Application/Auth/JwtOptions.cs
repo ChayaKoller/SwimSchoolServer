@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SwimSchool.Infrastructure.Authentication;
+namespace SwimSchool.Application.Auth;
 
 public sealed class JwtOptions
 {

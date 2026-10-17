@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SwimSchool.Application.Auth;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Groups;
@@ -38,6 +39,8 @@ public static class DependencyInjection
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+        services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         services.AddHealthChecks().AddDbContextCheck<SwimSchoolDbContext>("database");
 

@@ -68,6 +68,27 @@ public static class ErrorCodes
     public const string ValidationFailed = "VALIDATION_FAILED";
     public const string ValidationFailedMessage = "יש שדות שלא מולאו נכון";
 
+    public const string Unauthorized = "UNAUTHORIZED";
+    public const string UnauthorizedMessage = "יש להתחבר מחדש";
+
+    public const string InvalidCredentials = "INVALID_CREDENTIALS";
+    public const string InvalidCredentialsMessage = "האימייל או הסיסמה שגויים. נא לבדוק ולנסות שוב";
+
+    public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
+    public const string TooManyAttemptsMessage = "יותר מדי ניסיונות התחברות. נסי שוב בעוד דקה";
+
+    public const string SecretaryNotFound = "SECRETARY_NOT_FOUND";
+    public const string SecretaryNotFoundMessage = "המזכירה לא נמצאה";
+
+    public const string DuplicateEmail = "DUPLICATE_EMAIL";
+    public const string DuplicateEmailMessage = "כבר קיים משתמש עם האימייל הזה";
+
+    public const string DuplicateUserIdentity = "DUPLICATE_USER_IDENTITY";
+    public const string DuplicateUserIdentityMessage = "כבר קיים משתמש עם תעודת הזהות הזו";
+
+    public const string WrongPassword = "WRONG_PASSWORD";
+    public const string WrongPasswordMessage = "הסיסמה הנוכחית שגויה";
+
     public const string ServerError = "SERVER_ERROR";
     public const string ServerErrorMessage = "אירעה שגיאה. נסי שוב מאוחר יותר";
 }

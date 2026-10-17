@@ -7,6 +7,7 @@ namespace SwimSchool.API.Controllers;
 
 [ApiController]
 [Produces("application/json")]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
 public class ReportsController(IReportService reports) : ControllerBase
 {
     [HttpGet("api/reports")]

@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.OpenApi.Models;
 using NLog;
 using NLog.Web;
-using SwimSchool.API.Development;
+using SwimSchool.API.Auth;
+using SwimSchool.API.Cli;
 using SwimSchool.API.Middleware;
 using SwimSchool.API.Options;
 using SwimSchool.API.Validation;
@@ -24,13 +26,34 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
 
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<ICurrentUser, HttpCurrentUser>();
+    builder.Services.AddJwtAuthentication();
+    builder.Services.AddLoginRateLimit();
+
     builder.Services.AddControllers()
         .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
         .ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ValidationResponseFactory.Create);
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(o =>
+    {
+        o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Paste the token from POST /api/auth/login (without the word Bearer)"
+        });
+        o.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            }] = Array.Empty<string>()
+        });
+    });
 
     var cors = ClientCorsOptions.Load(builder.Configuration, builder.Environment);
     builder.Services.AddCors(o => o.AddPolicy(ClientCorsOptions.PolicyName, p => p
@@ -46,14 +69,14 @@ try
         o.KnownProxies.Clear();
     });
 
-    // TEMPORARY: removed in Stage 9
-    if (builder.Environment.IsDevelopment())
-    {
-        builder.Services.Configure<DevUserOptions>(builder.Configuration.GetSection("DevUser"));
-        builder.Services.AddScoped<ICurrentUser, DevCurrentUser>();
-    }
-
     var app = builder.Build();
+
+    // The web server is not started
+    if (args is ["add-teacher", ..])
+    {
+        await AddTeacherCommand.RunAsync(app.Services);
+        return;
+    }
 
     if (app.Environment.IsDevelopment())
     {
@@ -74,8 +97,10 @@ try
     app.UseExceptionHandler();
     app.UseHttpsRedirection();
     app.UseCors(ClientCorsOptions.PolicyName);
-    // Stage 9: app.UseAuthentication(); app.UseAuthorization();
-    app.MapHealthChecks("/health");
+    app.UseRateLimiter();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapHealthChecks("/health").AllowAnonymous();
     app.MapControllers();
 
     await app.RunAsync();

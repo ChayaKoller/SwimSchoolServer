@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Infrastructure.Persistence;
 using SwimSchool.Infrastructure.Persistence.Seeding;
 
@@ -14,5 +16,9 @@ public static class DatabaseInitializer
 
         await db.Database.MigrateAsync(cancellationToken);
         await DevelopmentDataSeeder.SeedAsync(db, cancellationToken);
+
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        await DevelopmentDataSeeder.SetDevPasswordsAsync(db, hasher, configuration["DevSeed:Password"], cancellationToken);
     }
 }

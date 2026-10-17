@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Domain.Entities;
 using SwimSchool.Domain.Enums;
 
@@ -82,11 +83,29 @@ public static class DevelopmentDataSeeder
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    public static async Task SetDevPasswordsAsync(SwimSchoolDbContext db, IPasswordHasher hasher, string? password, CancellationToken cancellationToken = default)
+    {
+        var users = await db.Users
+            .Where(u => u.PasswordHash == TempPasswordHash)
+            .ToListAsync(cancellationToken);
+
+        if (users.Count == 0)
+            return;
+
+        if (string.IsNullOrEmpty(password))
+            throw new InvalidOperationException("Missing DevSeed:Password in user secrets (needed to set demo user passwords)");
+
+        foreach (var user in users)
+            user.SetPassword(hasher.Hash(password));
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     private static User CreateUser(string identityNumber, string fullName, string email, string phone, UserRole role) => new()
     {
         IdentityNumber = identityNumber,
         FullName = fullName,
-        Email = email,
+        Email = email.ToLowerInvariant(),
         Phone = phone,
         PasswordHash = TempPasswordHash,
         Role = role
