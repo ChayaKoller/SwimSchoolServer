@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Common.Models;
@@ -17,7 +16,6 @@ public class ReportService(
     IUnitOfWork unitOfWork,
     ICurrentUser me,
     IDateTimeProvider clock,
-    IMapper mapper,
     IEnumerable<IReportPdfGenerator> pdfGenerators) : IReportService
 {
     // Reports follow the student: ownership is the student's current responsible teacher
@@ -36,7 +34,7 @@ public class ReportService(
 
         return new PagedResult<ReportDto>
         {
-            Items = mapper.Map<List<ReportDto>>(page.Items),
+            Items = ReportMapper.ToDtos(page.Items),
             TotalCount = page.TotalCount,
             Page = page.Page,
             PageSize = page.PageSize
@@ -107,7 +105,7 @@ public class ReportService(
     {
         var list = await reports.GetForStudentAsync(studentId, me.OwningTeacherId, ct);
 
-        return mapper.Map<List<ReportDto>>(list);
+        return ReportMapper.ToDtos(list);
     }
 
     public async Task<ReportDto> GetByIdAsync(int id, CancellationToken ct = default)
@@ -115,7 +113,7 @@ public class ReportService(
         var report = await reports.GetByIdAsync(id, me.OwningTeacherId, ct)
             ?? throw new NotFoundException(ErrorCodes.ReportNotFound, ErrorCodes.ReportNotFoundMessage);
 
-        return mapper.Map<ReportDto>(report);
+        return ReportMapper.ToDto(report);
     }
 
     public async Task<ReportPdfFile> GetPdfAsync(int id, CancellationToken ct = default)

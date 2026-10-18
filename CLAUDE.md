@@ -6,7 +6,7 @@
 - **SwimSchool.Domain:** entities, enums, BaseEntity, and business rules that belong to a single entity (e.g. `Group.HasFreeSpot()`). NO project references, NO NuGet packages.
 - **SwimSchool.Application:** references Domain only.
   - Repository interfaces and IUnitOfWork; Filters and PagedResult.
-  - DTOs and AutoMapper profiles; Services and their interfaces.
+  - DTOs and Mapperly mappers (static, generated at build time); Services and their interfaces.
   - Business exceptions (NotFound, Conflict, Forbidden).
   - Interfaces for external concerns: ICurrentUser, IPasswordHasher, IJwtTokenGenerator, IReportPdfGenerator.
   - No EF Core, no ASP.NET, no IQueryable in public signatures.

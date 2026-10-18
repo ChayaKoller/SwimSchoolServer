@@ -17,7 +17,7 @@ public class LessonServiceTests
 
     private LessonService CreateService() => new(
         _lessons.Object, _groups.Object, _unitOfWork.Object,
-        FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock(), TestMapper.Instance);
+        FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock());
 
     private Lesson ArrangeLesson(bool hasAttendance)
     {

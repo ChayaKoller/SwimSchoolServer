@@ -18,7 +18,7 @@ public class SecretaryServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private SecretaryService CreateService(ICurrentUser me) => new(
-        _users.Object, new UserAccountGuard(_users.Object), _hasher.Object, _unitOfWork.Object, me, TestMapper.Instance);
+        _users.Object, new UserAccountGuard(_users.Object), _hasher.Object, _unitOfWork.Object, me);
 
     private static CreateSecretaryRequest Request() => new()
     {

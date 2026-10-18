@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Enrollments.Dtos;
@@ -14,8 +13,7 @@ public class EnrollmentService(
     IEnrollmentRepository enrollments,
     IUnitOfWork unitOfWork,
     ICurrentUser me,
-    IDateTimeProvider clock,
-    IMapper mapper) : IEnrollmentService
+    IDateTimeProvider clock) : IEnrollmentService
 {
     public async Task<EnrollmentDto> EnrollAsync(EnrollRequest request, CancellationToken ct = default)
     {
@@ -58,7 +56,7 @@ public class EnrollmentService(
             throw new ConflictException(ErrorCodes.SpotTaken, ErrorCodes.SpotTakenMessage);
         }
 
-        return mapper.Map<EnrollmentDto>(enrollment);
+        return EnrollmentMapper.ToDto(enrollment);
     }
 
     public async Task CancelAsync(int id, CancellationToken ct = default)
@@ -96,7 +94,7 @@ public class EnrollmentService(
         var enrollment = await enrollments.GetByIdAsync(id, me.OwningTeacherId, ct)
             ?? throw new NotFoundException(ErrorCodes.EnrollmentNotFound, ErrorCodes.EnrollmentNotFoundMessage);
 
-        return mapper.Map<EnrollmentDto>(enrollment);
+        return EnrollmentMapper.ToDto(enrollment);
     }
 
     private async Task<Enrollment> FindForUpdateAsync(int id, CancellationToken ct) =>

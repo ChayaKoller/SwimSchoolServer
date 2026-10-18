@@ -22,7 +22,7 @@ public class LayerDependencyTests
     {
         AssertNoDependency(DomainAssembly,
             Application, Infrastructure, Api,
-            "Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore", "AutoMapper");
+            "Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore", "Riok.Mapperly");
     }
 
     [Fact]

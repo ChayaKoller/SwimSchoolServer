@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Common.Users;
@@ -14,8 +13,7 @@ public class SecretaryService(
     UserAccountGuard guard,
     IPasswordHasher hasher,
     IUnitOfWork uow,
-    ICurrentUser me,
-    IMapper mapper) : ISecretaryService
+    ICurrentUser me) : ISecretaryService
 {
     public async Task<IReadOnlyList<SecretaryDto>> GetAllAsync(CancellationToken ct = default)
     {
@@ -23,7 +21,7 @@ public class SecretaryService(
 
         var secretaries = await users.GetSecretariesAsync(me.UserId, ct);
 
-        return mapper.Map<List<SecretaryDto>>(secretaries);
+        return SecretaryMapper.ToDtos(secretaries);
     }
 
     public async Task<SecretaryDto> CreateAsync(CreateSecretaryRequest request, CancellationToken ct = default)
@@ -46,7 +44,7 @@ public class SecretaryService(
         users.Add(secretary);
         await uow.SaveChangesAsync(ct);
 
-        return mapper.Map<SecretaryDto>(secretary);
+        return SecretaryMapper.ToDto(secretary);
     }
 
     public async Task DeactivateAsync(int id, CancellationToken ct = default)

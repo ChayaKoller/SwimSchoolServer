@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.ReportSettings.Dtos;
@@ -9,8 +8,7 @@ namespace SwimSchool.Application.ReportSettings;
 public class ReportSettingsService(
     IUserRepository users,
     IUnitOfWork unitOfWork,
-    ICurrentUser me,
-    IMapper mapper) : IReportSettingsService
+    ICurrentUser me) : IReportSettingsService
 {
     // Teacher and secretary: a secretary needs the defaults to pre-fill the form
     public async Task<ReportSettingsDto> GetAsync(CancellationToken ct = default)
@@ -18,7 +16,7 @@ public class ReportSettingsService(
         var teacher = await users.GetByIdAsync(me.OwningTeacherId, ct)
             ?? throw new InvalidOperationException("Owning teacher not found");
 
-        return mapper.Map<ReportSettingsDto>(teacher);
+        return ReportSettingsMapper.ToDto(teacher);
     }
 
     // Teacher only
@@ -39,6 +37,6 @@ public class ReportSettingsService(
 
         await unitOfWork.SaveChangesAsync(ct);
 
-        return mapper.Map<ReportSettingsDto>(teacher);
+        return ReportSettingsMapper.ToDto(teacher);
     }
 }

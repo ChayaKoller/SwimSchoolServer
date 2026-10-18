@@ -80,7 +80,6 @@ try
 
     if (app.Environment.IsDevelopment())
     {
-        app.Services.GetRequiredService<AutoMapper.IMapper>().ConfigurationProvider.AssertConfigurationIsValid();
         await app.Services.InitializeDatabaseAsync();
 
         app.UseSwagger();

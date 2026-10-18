@@ -20,7 +20,7 @@ public class EnrollmentServiceTests
 
     private EnrollmentService CreateService(ICurrentUser? me = null) => new(
         _students.Object, _groups.Object, _enrollments.Object, _unitOfWork.Object,
-        me ?? FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock(), TestMapper.Instance);
+        me ?? FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock());
 
     private (Student student, Group group) Arrange(Group group)
     {

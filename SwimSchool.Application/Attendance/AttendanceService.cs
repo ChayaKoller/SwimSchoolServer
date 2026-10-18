@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Attendance.Dtos;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
@@ -14,8 +13,7 @@ public class AttendanceService(
     IGroupRepository groups,
     IUnitOfWork unitOfWork,
     ICurrentUser me,
-    IDateTimeProvider clock,
-    IMapper mapper) : IAttendanceService
+    IDateTimeProvider clock) : IAttendanceService
 {
     public async Task<LessonAttendanceDto> GetLessonAsync(int lessonId, CancellationToken ct = default)
     {
@@ -27,7 +25,7 @@ public class AttendanceService(
         _ = await groups.GetForAttendanceAsync(lesson.GroupId, me.OwningTeacherId, ct)
             ?? throw new NotFoundException(ErrorCodes.LessonNotFound, ErrorCodes.LessonNotFoundMessage);
 
-        return mapper.Map<LessonAttendanceDto>(lesson);
+        return AttendanceMapper.ToDto(lesson);
     }
 
     public async Task UpdateLessonAsync(UpdateAttendanceRequest request, CancellationToken ct = default)

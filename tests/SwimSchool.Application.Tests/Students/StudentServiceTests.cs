@@ -17,7 +17,7 @@ public class StudentServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private StudentService CreateService(ICurrentUser me) =>
-        new(_students.Object, _users.Object, _unitOfWork.Object, me, TestMapper.Instance);
+        new(_students.Object, _users.Object, _unitOfWork.Object, me);
 
     private static CreateStudentRequest NewStudentRequest() => new()
     {

@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- A DTO field that nothing fills fails the build (Mapperly RMG012) -->
+  <PropertyGroup>
+    <WarningsAsErrors>$(WarningsAsErrors);RMG012</WarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="AutoMapper" />
+    <!-- Source generator: the mapping code is generated at build time, nothing ships at runtime -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

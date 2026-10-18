@@ -15,7 +15,7 @@ public class GroupServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private GroupService CreateService(ICurrentUser? me = null) => new(
-        _groups.Object, _unitOfWork.Object, me ?? FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock(), TestMapper.Instance);
+        _groups.Object, _unitOfWork.Object, me ?? FakeCurrentUser.Teacher(TestData.TeacherId), new FakeClock());
 
     private static UpdateGroupRequest UpdateRequest(int maxStudents, uint version = 1) => new()
     {

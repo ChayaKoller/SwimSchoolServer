@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Groups;
@@ -12,8 +11,7 @@ public class LessonService(
     IGroupRepository groups,
     IUnitOfWork unitOfWork,
     ICurrentUser me,
-    IDateTimeProvider clock,
-    IMapper mapper) : ILessonService
+    IDateTimeProvider clock) : ILessonService
 {
     public async Task<List<LessonDto>> GetWeekAsync(CancellationToken ct = default)
     {
@@ -23,7 +21,7 @@ public class LessonService(
 
         var week = await lessons.GetForTeacherAsync(me.OwningTeacherId, fromUtc, toUtc, ct);
 
-        return mapper.Map<List<LessonDto>>(week);
+        return LessonMapper.ToDtos(week);
     }
 
     public async Task<List<LessonDto>> AddAsync(int groupId, AddLessonsRequest request, CancellationToken ct = default)
@@ -45,7 +43,7 @@ public class LessonService(
         group.LessonsCount += newLessons.Count;
         await unitOfWork.SaveChangesAsync(ct);
 
-        return mapper.Map<List<LessonDto>>(newLessons);
+        return LessonMapper.ToDtos(newLessons);
     }
 
     public async Task<LessonDto> UpdateAsync(int lessonId, UpdateLessonRequest request, CancellationToken ct = default)
@@ -55,7 +53,7 @@ public class LessonService(
         lesson.StartTime = clock.IsraelToUtc(request.StartTime!.Value);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return mapper.Map<LessonDto>(lesson);
+        return LessonMapper.ToDto(lesson);
     }
 
     public async Task DeleteAsync(int lessonId, CancellationToken ct = default)

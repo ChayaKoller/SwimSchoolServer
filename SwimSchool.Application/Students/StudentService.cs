@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Common.Models;
@@ -12,8 +11,7 @@ public class StudentService(
     IStudentRepository students,
     IUserRepository users,
     IUnitOfWork unitOfWork,
-    ICurrentUser me,
-    IMapper mapper) : IStudentService
+    ICurrentUser me) : IStudentService
 {
     public async Task<PagedResult<StudentListItemDto>> GetAsync(StudentFilter filter, CancellationToken ct = default)
     {
@@ -21,7 +19,7 @@ public class StudentService(
 
         return new PagedResult<StudentListItemDto>
         {
-            Items = mapper.Map<List<StudentListItemDto>>(page.Items),
+            Items = StudentMapper.ToListItemDtos(page.Items),
             TotalCount = page.TotalCount,
             Page = page.Page,
             PageSize = page.PageSize
@@ -33,7 +31,7 @@ public class StudentService(
         var student = await students.GetByIdAsync(id, me.OwningTeacherId, ct)
             ?? throw NotFound();
 
-        return mapper.Map<StudentDetailsDto>(student);
+        return StudentMapper.ToDetailsDto(student);
     }
 
     public async Task<StudentDetailsDto> CreateAsync(CreateStudentRequest request, CancellationToken ct = default)
@@ -41,7 +39,7 @@ public class StudentService(
         if (await students.IdentityNumberExistsAsync(request.IdentityNumber, ct))
             throw new ConflictException(ErrorCodes.DuplicateIdentity, ErrorCodes.DuplicateIdentityMessage);
 
-        var student = mapper.Map<Student>(request);
+        var student = StudentMapper.ToEntity(request);
         student.ResponsibleTeacherId = me.OwningTeacherId;
 
         students.Add(student);
@@ -55,7 +53,7 @@ public class StudentService(
         var student = await students.FindForUpdateAsync(id, me.OwningTeacherId, ct)
             ?? throw NotFound();
 
-        mapper.Map(request, student);
+        StudentMapper.UpdateEntity(request, student);
         await unitOfWork.SaveChangesAsync(ct);
 
         return await GetByIdAsync(id, ct);

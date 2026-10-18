@@ -18,7 +18,7 @@ public class ReportServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private ReportService CreateService(ICurrentUser me, params IReportPdfGenerator[] generators) => new(
-        _students.Object, _reports.Object, _unitOfWork.Object, me, new FakeClock(), TestMapper.Instance, generators);
+        _students.Object, _reports.Object, _unitOfWork.Object, me, new FakeClock(), generators);
 
     private static CreateReportRequest Request(int studentId, decimal price) => new()
     {

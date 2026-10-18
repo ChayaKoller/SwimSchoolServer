@@ -1,4 +1,3 @@
-using AutoMapper;
 using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Common.Models;
@@ -11,8 +10,7 @@ public class GroupService(
     IGroupRepository groups,
     IUnitOfWork unitOfWork,
     ICurrentUser me,
-    IDateTimeProvider clock,
-    IMapper mapper) : IGroupService
+    IDateTimeProvider clock) : IGroupService
 {
     public async Task<PagedResult<GroupDto>> GetAsync(GroupFilter filter, CancellationToken ct = default)
     {
@@ -20,7 +18,7 @@ public class GroupService(
 
         return new PagedResult<GroupDto>
         {
-            Items = mapper.Map<List<GroupDto>>(page.Items),
+            Items = GroupMapper.ToDtos(page.Items),
             TotalCount = page.TotalCount,
             Page = page.Page,
             PageSize = page.PageSize
@@ -32,7 +30,7 @@ public class GroupService(
         var group = await groups.GetDetailsAsync(id, me.OwningTeacherId, ct)
             ?? throw NotFound();
 
-        return mapper.Map<GroupDetailsDto>(group);
+        return GroupMapper.ToDetailsDto(group);
     }
 
     public async Task<GroupDetailsDto> CreateAsync(CreateGroupRequest request, CancellationToken ct = default)
@@ -44,7 +42,7 @@ public class GroupService(
                 .Select(i => request.FirstLessonAt!.Value.AddDays(7 * i))
                 .ToList();
 
-        var group = mapper.Map<Group>(request);
+        var group = GroupMapper.ToEntity(request);
         group.TeacherId = me.OwningTeacherId;
         group.LessonsCount = lessonTimes.Count;
         group.Lessons = lessonTimes
@@ -68,10 +66,10 @@ public class GroupService(
         if (request.MaxStudents!.Value < group.EnrolledCount)
             throw new BusinessRuleException(ErrorCodes.MaxBelowEnrolled, ErrorCodes.MaxBelowEnrolledMessage);
 
-        mapper.Map(request, group);
+        GroupMapper.UpdateEntity(request, group);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return mapper.Map<GroupDto>(group);
+        return GroupMapper.ToDto(group);
     }
 
     // No enrollments ever: real delete with its lessons. Otherwise archive
