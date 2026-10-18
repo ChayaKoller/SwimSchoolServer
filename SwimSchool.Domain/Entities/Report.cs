@@ -13,6 +13,17 @@ public class Report : BaseEntity
 
     public HealthFund HealthFund { get; set; }
 
+    public TreatmentType TreatmentType { get; set; } = TreatmentType.Group;
+
+    // The real price for this report; may differ from the teacher's default
+    public decimal PricePerTreatment { get; set; }
+
+    // The "עבור:" line
+    public string ServiceDescription { get; set; } = string.Empty;
+
+    // Filled = private insurance; null = the student's health fund
+    public string? InsuranceCompany { get; set; }
+
     // UTC
     public DateTime IssuedAt { get; set; }
 

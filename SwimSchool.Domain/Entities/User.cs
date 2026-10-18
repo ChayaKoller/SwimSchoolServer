@@ -17,6 +17,16 @@ public class User : BaseEntity
     public UserRole Role { get; set; }
     public bool IsActive { get; set; } = true;
 
+    // Teacher only. Printed at the bottom of every report; null = her full name.
+    public string? ReportSignature { get; set; }
+
+    // Teacher only. Pre-filled in the report form; the report keeps its own price.
+    public decimal DefaultGroupPrice { get; set; } = 90m;
+    public decimal? DefaultIndividualPrice { get; set; }
+
+    // Teacher only. How many empty date rows the report form shows at first (the report itself may have 1-100).
+    public int DefaultTreatmentsCount { get; set; } = 16;
+
     // Secretary's teacher
     public int? TeacherId { get; set; }
     public User? Teacher { get; set; }

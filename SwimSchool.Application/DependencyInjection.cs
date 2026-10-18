@@ -7,6 +7,7 @@ using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Groups;
 using SwimSchool.Application.Lessons;
 using SwimSchool.Application.Reports;
+using SwimSchool.Application.ReportSettings;
 using SwimSchool.Application.Secretaries;
 using SwimSchool.Application.Students;
 using SwimSchool.Application.Teachers;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<UserAccountGuard>();
         services.AddScoped<ISecretaryService, SecretaryService>();
         services.AddScoped<ITeacherAccountService, TeacherAccountService>();
+        services.AddScoped<IReportSettingsService, ReportSettingsService>();
 
         return services;
     }

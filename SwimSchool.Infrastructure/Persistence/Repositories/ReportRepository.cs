@@ -56,6 +56,32 @@ public class ReportRepository(SwimSchoolDbContext db) : IReportRepository
             .Include(r => r.CreatedBy)
             .FirstOrDefaultAsync(r => r.Id == id, ct);
 
+    public Task<Report?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>
+        ForTeacher(teacherId).FirstOrDefaultAsync(r => r.Id == id, ct);
+
+    public async Task<IReadOnlyList<DateTime>> GetAttendedLessonTimesAsync(
+        int studentId, int teacherId, int? groupId, DateTime? fromUtc, DateTime? toUtcExclusive,
+        CancellationToken ct = default)
+    {
+        var query = db.Attendances
+            .AsNoTracking()
+            .Where(a => a.WasPresent
+                && a.Enrollment.StudentId == studentId
+                && a.Lesson.Group.TeacherId == teacherId);
+
+        if (groupId is int group)
+            query = query.Where(a => a.Lesson.GroupId == group);
+
+        if (fromUtc is DateTime from)
+            query = query.Where(a => a.Lesson.StartTime >= from);
+
+        if (toUtcExclusive is DateTime to)
+            query = query.Where(a => a.Lesson.StartTime < to);
+
+        // One query, times only
+        return await query.Select(a => a.Lesson.StartTime).ToListAsync(ct);
+    }
+
     public void Add(Report report) => db.Reports.Add(report);
 
     private IQueryable<Report> ForTeacher(int teacherId) =>

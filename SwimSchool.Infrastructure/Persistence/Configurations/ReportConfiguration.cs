@@ -10,6 +10,9 @@ public class ReportConfiguration : IEntityTypeConfiguration<Report>
     {
         builder.Property(r => r.HealthFund).HasConversion<int>();
         builder.Property(r => r.LessonDates).HasColumnType("date[]");
+        builder.Property(r => r.PricePerTreatment).HasPrecision(10, 2);
+        builder.Property(r => r.ServiceDescription).HasMaxLength(100).IsRequired();
+        builder.Property(r => r.InsuranceCompany).HasMaxLength(100);
 
         builder.HasOne(r => r.Student)
             .WithMany(s => s.Reports)

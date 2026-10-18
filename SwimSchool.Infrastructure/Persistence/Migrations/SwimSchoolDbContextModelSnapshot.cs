@@ -210,6 +210,10 @@ namespace SwimSchool.Infrastructure.Persistence.Migrations
                     b.Property<int>("HealthFund")
                         .HasColumnType("integer");
 
+                    b.Property<string>("InsuranceCompany")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<DateTime>("IssuedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -217,7 +221,19 @@ namespace SwimSchool.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("date[]");
 
+                    b.Property<decimal>("PricePerTreatment")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<string>("ServiceDescription")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TreatmentType")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -302,6 +318,17 @@ namespace SwimSchool.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<decimal>("DefaultGroupPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<decimal?>("DefaultIndividualPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<int>("DefaultTreatmentsCount")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(254)
@@ -331,6 +358,10 @@ namespace SwimSchool.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ReportSignature")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");

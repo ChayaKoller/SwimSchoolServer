@@ -21,6 +21,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.SecurityStamp).HasMaxLength(32).IsRequired();
         builder.Property(u => u.Role).HasConversion<int>();
 
+        builder.Property(u => u.ReportSignature).HasMaxLength(200);
+        builder.Property(u => u.DefaultGroupPrice).HasPrecision(10, 2);
+        builder.Property(u => u.DefaultIndividualPrice).HasPrecision(10, 2);
+
         builder.Ignore(u => u.OwningTeacherId);
         builder.Ignore(u => u.CanSignIn);
 

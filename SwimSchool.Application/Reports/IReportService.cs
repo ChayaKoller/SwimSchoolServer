@@ -7,6 +7,8 @@ public interface IReportService
 {
     Task<PagedResult<ReportDto>> GetAsync(ReportFilter filter, CancellationToken ct = default);
     Task<ReportDto> CreateAsync(CreateReportRequest request, CancellationToken ct = default);
+    Task<ReportDto> UpdateAsync(int id, UpdateReportRequest request, CancellationToken ct = default);
     Task<List<ReportDto>> GetForStudentAsync(int studentId, CancellationToken ct = default);
     Task<ReportDto> GetByIdAsync(int id, CancellationToken ct = default);
+    Task<IReadOnlyList<DateOnly>> GetAttendedDatesAsync(int studentId, AttendedDatesFilter filter, CancellationToken ct = default);
 }
