@@ -11,7 +11,11 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
         builder.Property(e => e.AmountDue).HasPrecision(10, 2);
         builder.Property(e => e.AmountPaid).HasPrecision(10, 2);
 
-        builder.HasIndex(e => new { e.StudentId, e.GroupId }).IsUnique();
+        // Only one ACTIVE enrollment per student and group; cancelled ones stay as history,
+        // so a student can be enrolled again after a cancellation
+        builder.HasIndex(e => new { e.StudentId, e.GroupId })
+            .IsUnique()
+            .HasFilter("\"IsActive\"");
 
         builder.HasOne(e => e.Student)
             .WithMany(s => s.Enrollments)

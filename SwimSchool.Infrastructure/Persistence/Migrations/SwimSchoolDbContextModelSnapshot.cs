@@ -95,7 +95,8 @@ namespace SwimSchool.Infrastructure.Persistence.Migrations
                     b.HasIndex("GroupId");
 
                     b.HasIndex("StudentId", "GroupId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("\"IsActive\"");
 
                     b.ToTable("Enrollments");
                 });
