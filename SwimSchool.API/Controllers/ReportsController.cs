@@ -52,4 +52,14 @@ public class ReportsController(IReportService reports) : ControllerBase
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ReportDto>> GetById([FromRoute] int id, CancellationToken ct) =>
         Ok(await reports.GetByIdAsync(id, ct));
+
+    [HttpGet("api/reports/{id:int}/pdf")]
+    [Produces("application/pdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK, "application/pdf")]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Pdf([FromRoute] int id, CancellationToken ct)
+    {
+        var pdf = await reports.GetPdfAsync(id, ct);
+        return File(pdf.Content, "application/pdf", pdf.FileName);
+    }
 }

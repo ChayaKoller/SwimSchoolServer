@@ -3,8 +3,10 @@ using SwimSchool.Application.Common.Exceptions;
 using SwimSchool.Application.Common.Interfaces;
 using SwimSchool.Application.Common.Models;
 using SwimSchool.Application.Reports.Dtos;
+using SwimSchool.Application.Reports.Pdf;
 using SwimSchool.Application.Students;
 using SwimSchool.Domain.Entities;
+using SwimSchool.Domain.Enums;
 
 namespace SwimSchool.Application.Reports;
 
@@ -15,7 +17,8 @@ public class ReportService(
     IUnitOfWork unitOfWork,
     ICurrentUser me,
     IDateTimeProvider clock,
-    IMapper mapper) : IReportService
+    IMapper mapper,
+    IEnumerable<IReportPdfGenerator> pdfGenerators) : IReportService
 {
     // Reports follow the student: ownership is the student's current responsible teacher
     public async Task<PagedResult<ReportDto>> GetAsync(ReportFilter filter, CancellationToken ct = default)
@@ -114,6 +117,34 @@ public class ReportService(
 
         return mapper.Map<ReportDto>(report);
     }
+
+    public async Task<ReportPdfFile> GetPdfAsync(int id, CancellationToken ct = default)
+    {
+        var report = await reports.GetForPdfAsync(id, me.OwningTeacherId, ct)
+            ?? throw new NotFoundException(ErrorCodes.ReportNotFound, ErrorCodes.ReportNotFoundMessage);
+
+        // Signed by the teacher the report was created under (herself, or the creating secretary's teacher),
+        // so an old report keeps its signature even after the student moves to another teacher.
+        var teacher = report.CreatedBy.Role == UserRole.Teacher ? report.CreatedBy : report.CreatedBy.Teacher!;
+        var data = new ReportPdfData(
+            TeacherId: teacher.Id,
+            IssuedOn: DateOnly.FromDateTime(clock.UtcToIsrael(report.IssuedAt)),
+            ServiceDescription: report.ServiceDescription,
+            StudentName: report.Student.FullName,
+            StudentIdentityNumber: report.Student.IdentityNumber,
+            TreatmentType: report.TreatmentType,
+            PricePerTreatment: report.PricePerTreatment,
+            TotalAmount: report.PricePerTreatment * report.LessonDates.Count,
+            TreatmentDates: report.LessonDates,
+            Signature: string.IsNullOrWhiteSpace(teacher.ReportSignature) ? teacher.FullName : teacher.ReportSignature);
+
+        return new ReportPdfFile(PickGenerator(report).Generate(data), $"report-{report.Id}.pdf");
+    }
+
+    // A fund's own form if one exists; private insurance always uses the general form.
+    private IReportPdfGenerator PickGenerator(Report report) =>
+        (report.InsuranceCompany is null ? pdfGenerators.FirstOrDefault(g => g.Fund == report.HealthFund) : null)
+        ?? pdfGenerators.Single(g => g.Fund is null);
 
     private static void ApplyDetails(Report report, ReportDetailsRequest request)
     {

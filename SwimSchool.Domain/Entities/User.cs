@@ -24,7 +24,7 @@ public class User : BaseEntity
     public decimal DefaultGroupPrice { get; set; } = 90m;
     public decimal? DefaultIndividualPrice { get; set; }
 
-    // Teacher only. How many empty date rows the report form shows at first (the report itself may have 1-100).
+    // Teacher only. How many empty date rows the report form shows at first (the report itself may have 1-34).
     public int DefaultTreatmentsCount { get; set; } = 16;
 
     // Secretary's teacher

@@ -59,6 +59,13 @@ public class ReportRepository(SwimSchoolDbContext db) : IReportRepository
     public Task<Report?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>
         ForTeacher(teacherId).FirstOrDefaultAsync(r => r.Id == id, ct);
 
+    public Task<Report?> GetForPdfAsync(int id, int teacherId, CancellationToken ct = default) =>
+        db.Reports
+            .AsNoTracking()
+            .Include(r => r.Student)
+            .Include(r => r.CreatedBy).ThenInclude(u => u.Teacher)
+            .FirstOrDefaultAsync(r => r.Id == id && r.Student.ResponsibleTeacherId == teacherId, ct);
+
     public async Task<IReadOnlyList<DateTime>> GetAttendedLessonTimesAsync(
         int studentId, int teacherId, int? groupId, DateTime? fromUtc, DateTime? toUtcExclusive,
         CancellationToken ct = default)

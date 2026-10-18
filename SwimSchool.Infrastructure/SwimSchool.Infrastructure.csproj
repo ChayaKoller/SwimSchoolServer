@@ -7,6 +7,11 @@
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="QuestPDF" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Pdf\Assets\*.ttf;Pdf\Assets\*.png;Pdf\Assets\*.jpeg" />
   </ItemGroup>
 
   <ItemGroup>

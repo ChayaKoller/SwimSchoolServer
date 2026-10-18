@@ -7,9 +7,11 @@ using SwimSchool.Application.Enrollments;
 using SwimSchool.Application.Groups;
 using SwimSchool.Application.Lessons;
 using SwimSchool.Application.Reports;
+using SwimSchool.Application.Reports.Pdf;
 using SwimSchool.Application.Students;
 using SwimSchool.Application.Teachers;
 using SwimSchool.Infrastructure.Authentication;
+using SwimSchool.Infrastructure.Pdf;
 using SwimSchool.Infrastructure.Persistence;
 using SwimSchool.Infrastructure.Persistence.Repositories;
 using SwimSchool.Infrastructure.Time;
@@ -41,6 +43,9 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IReportBrandingProvider, EmbeddedReportBrandingProvider>();
+        services.AddSingleton<IReportPdfGenerator, TreatmentReportPdfGenerator>();
+        // A new fund form later = one more line: services.AddSingleton<IReportPdfGenerator, MeuhedetReportPdfGenerator>();
 
         services.AddHealthChecks().AddDbContextCheck<SwimSchoolDbContext>("database");
 

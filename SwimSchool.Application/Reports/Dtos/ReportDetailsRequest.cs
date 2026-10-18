@@ -20,6 +20,6 @@ public abstract record ReportDetailsRequest
     [MaxLength(100)]
     public string? InsuranceCompany { get; init; }
 
-    [MinLength(1), MaxLength(100), NoDuplicates, NoFutureDates]
+    [MinLength(1), MaxLength(34, ErrorMessage = "אפשר להכניס עד 34 תאריכים בדוח"), NoDuplicates, NoFutureDates]
     public List<DateOnly> LessonDates { get; init; } = new List<DateOnly>();
 }

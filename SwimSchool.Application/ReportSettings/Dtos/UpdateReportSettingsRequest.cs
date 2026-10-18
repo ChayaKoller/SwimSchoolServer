@@ -14,6 +14,6 @@ public sealed record UpdateReportSettingsRequest
     [Range(typeof(decimal), "1", "10000", ErrorMessage = "המחיר לטיפול חייב להיות בין 1 ל-10,000")]
     public decimal? DefaultIndividualPrice { get; init; }
 
-    [Required, Range(1, 100)]
+    [Required, Range(1, 34)]
     public int? DefaultTreatmentsCount { get; init; }
 }
