@@ -21,4 +21,13 @@ public static class DatabaseInitializer
         var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         await DevelopmentDataSeeder.SetDevPasswordsAsync(db, hasher, configuration["DevSeed:Password"], cancellationToken);
     }
+
+    // Production: migrations only, never demo data
+    public static async Task MigrateDatabaseAsync(this IServiceProvider services, CancellationToken cancellationToken = default)
+    {
+        await using var scope = services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<SwimSchoolDbContext>();
+
+        await db.Database.MigrateAsync(cancellationToken);
+    }
 }

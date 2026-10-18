@@ -87,6 +87,10 @@ try
     }
     else
     {
+        // Render: Database__MigrateOnStartup=true (one instance, no pre-deploy step on the free plan)
+        if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+            await app.Services.MigrateDatabaseAsync();
+
         app.UseForwardedHeaders();
         app.UseHsts();
     }
