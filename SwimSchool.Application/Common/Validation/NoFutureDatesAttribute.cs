@@ -9,15 +9,18 @@ public sealed class NoFutureDatesAttribute : ValidationAttribute
     {
     }
 
-    public override bool IsValid(object? value)
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value is null)
-            return true;
+            return ValidationResult.Success;
 
-        if (value is not IEnumerable<DateOnly> dates)
-            return false;
+        var today = IsraelToday.From(validationContext);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        return dates.All(d => d <= today);
+        return value is IEnumerable<DateOnly> dates && dates.All(d => d <= today)
+            ? ValidationResult.Success
+            : new ValidationResult(FormatErrorMessage(validationContext.DisplayName), MemberNames(validationContext));
     }
+
+    private static string[]? MemberNames(ValidationContext context) =>
+        context.MemberName is null ? null : [context.MemberName];
 }

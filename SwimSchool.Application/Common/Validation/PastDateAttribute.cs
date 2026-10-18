@@ -9,11 +9,16 @@ public sealed class PastDateAttribute : ValidationAttribute
     {
     }
 
-    public override bool IsValid(object? value)
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value is null)
-            return true;
+            return ValidationResult.Success;
 
-        return value is DateOnly date && date < DateOnly.FromDateTime(DateTime.UtcNow);
+        return value is DateOnly date && date < IsraelToday.From(validationContext)
+            ? ValidationResult.Success
+            : new ValidationResult(FormatErrorMessage(validationContext.DisplayName), MemberNames(validationContext));
     }
+
+    private static string[]? MemberNames(ValidationContext context) =>
+        context.MemberName is null ? null : [context.MemberName];
 }

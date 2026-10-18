@@ -1,4 +1,4 @@
-using SwimSchool.Domain.Common;
+    using SwimSchool.Domain.Common;
 using SwimSchool.Domain.Enums;
 
 namespace SwimSchool.Domain.Entities;
