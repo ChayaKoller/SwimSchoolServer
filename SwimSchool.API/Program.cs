@@ -39,6 +39,8 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(o =>
     {
+        o.SupportNonNullableReferenceTypes();
+
         o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Type = SecuritySchemeType.Http,
@@ -46,6 +48,7 @@ try
             BearerFormat = "JWT",
             Description = "Paste the token from POST /api/auth/login (without the word Bearer)"
         });
+
         o.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             [new OpenApiSecurityScheme

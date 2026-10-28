@@ -10,6 +10,7 @@ public static partial class StudentMapper
 {
     [MapPropertyFromSource(nameof(StudentListItemDto.AmountOwed), Use = nameof(AmountOwed))]
     [MapPropertyFromSource(nameof(StudentListItemDto.AbsencesCount), Use = nameof(AbsencesCount))]
+    [MapPropertyFromSource(nameof(StudentListItemDto.ActiveGroupName), Use = nameof(ActiveGroupName))]
     public static partial StudentListItemDto ToListItemDto(Student student);
 
     public static partial List<StudentListItemDto> ToListItemDtos(IEnumerable<Student> students);
@@ -43,6 +44,7 @@ public static partial class StudentMapper
     [MapPropertyFromSource(nameof(StudentGroupDto.GroupName), Use = nameof(GroupName))]
     [MapPropertyFromSource(nameof(StudentGroupDto.Season), Use = nameof(GroupSeason))]
     [MapPropertyFromSource(nameof(StudentGroupDto.Year), Use = nameof(GroupYear))]
+    [MapPropertyFromSource(nameof(StudentGroupDto.AbsencesCount), Use = nameof(EnrollmentAbsences))]
     private static partial StudentGroupDto ToGroupDto(Enrollment enrollment);
 
     private static decimal AmountOwed(Student student) => student.Enrollments
@@ -53,6 +55,15 @@ public static partial class StudentMapper
         .Where(e => e.IsActive)
         .SelectMany(e => e.Attendances)
         .Count(a => !a.WasPresent);
+
+    // Usually one; with more, the latest enrollment
+    private static string? ActiveGroupName(Student student) => student.Enrollments
+        .Where(e => e.IsActive && e.Group is { IsActive: true })
+        .OrderByDescending(e => e.EnrolledAt)
+        .Select(e => e.Group.Name)
+        .FirstOrDefault();
+
+    private static int EnrollmentAbsences(Enrollment enrollment) => enrollment.Attendances.Count(a => !a.WasPresent);
 
     private static List<StudentGroupDto> ActiveGroups(ICollection<Enrollment> enrollments) =>
         enrollments.Where(e => e.IsActive).Select(ToGroupDto).ToList();

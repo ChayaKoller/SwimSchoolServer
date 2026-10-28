@@ -36,6 +36,8 @@ public class StudentRepository(SwimSchoolDbContext db) : IStudentRepository
         return await query
             .Include(s => s.Enrollments.Where(e => e.IsActive))
                 .ThenInclude(e => e.Attendances)
+            .Include(s => s.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Group)
             .AsSplitQuery()
             .OrderBy(s => s.FullName)
             .ThenBy(s => s.Id)
@@ -48,6 +50,9 @@ public class StudentRepository(SwimSchoolDbContext db) : IStudentRepository
             .Include(s => s.ResponsibleTeacher)
             .Include(s => s.Enrollments.Where(e => e.IsActive))
                 .ThenInclude(e => e.Group)
+            .Include(s => s.Enrollments.Where(e => e.IsActive))
+                .ThenInclude(e => e.Attendances)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(s => s.Id == id, ct);
 
     public Task<Student?> FindForUpdateAsync(int id, int teacherId, CancellationToken ct = default) =>

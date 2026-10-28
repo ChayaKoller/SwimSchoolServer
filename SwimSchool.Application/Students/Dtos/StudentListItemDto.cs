@@ -12,4 +12,6 @@ public sealed record StudentListItemDto
     public bool IsActive { get; init; }
     public decimal AmountOwed { get; init; }
     public int AbsencesCount { get; init; }
+    // The active group she is enrolled in; null = none
+    public string? ActiveGroupName { get; init; }
 }

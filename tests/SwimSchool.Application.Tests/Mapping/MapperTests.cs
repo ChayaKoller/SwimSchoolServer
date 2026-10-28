@@ -96,6 +96,39 @@ public class MapperTests
         Assert.Equal(1, dto.AbsencesCount);
     }
 
+    [Fact]
+    public void StudentListItem_ShowsActiveGroupName()
+    {
+        var student = new Student();
+        var cancelled = Enrollment(1, "S", amountDue: 400, amountPaid: 0, isActive: false);
+        cancelled.Group = new Group { Name = "Old", IsActive = true };
+        var active = Enrollment(1, "S", amountDue: 400, amountPaid: 0, isActive: true);
+        active.Group = new Group { Name = "Dolphins", IsActive = true };
+        student.Enrollments.Add(cancelled);
+        student.Enrollments.Add(active);
+
+        Assert.Equal("Dolphins", StudentMapper.ToListItemDto(student).ActiveGroupName);
+        Assert.Null(StudentMapper.ToListItemDto(new Student()).ActiveGroupName);
+    }
+
+    [Fact]
+    public void StudentDetails_CountsAbsencesPerGroup()
+    {
+        var student = new Student();
+        var first = Enrollment(1, "S", amountDue: 400, amountPaid: 0, isActive: true);
+        first.Attendances.Add(new AttendanceEntity { WasPresent = false });
+        first.Attendances.Add(new AttendanceEntity { WasPresent = false });
+        first.Attendances.Add(new AttendanceEntity { WasPresent = true });
+        var second = Enrollment(1, "S", amountDue: 400, amountPaid: 0, isActive: true);
+        second.Attendances.Add(new AttendanceEntity { WasPresent = false });
+        student.Enrollments.Add(first);
+        student.Enrollments.Add(second);
+
+        var groups = StudentMapper.ToDetailsDto(student).Groups;
+
+        Assert.Equal([2, 1], groups.Select(g => g.AbsencesCount));
+    }
+
     private static Enrollment Enrollment(int studentId, string name, decimal amountDue, decimal amountPaid, bool isActive) => new()
     {
         StudentId = studentId,

@@ -10,7 +10,7 @@ public static class DevelopmentDataSeeder
     // Replaced with a real hash in Stage 9
     private const string TempPasswordHash = "TEMP";
 
-    private static readonly int[] LessonDayOffsets = [1, 4, 7, 10, 13];
+    private static readonly int[] LessonDayOffsets = [-9, -6, -3, 1, 4, 7, 10];
 
     public static async Task SeedAsync(SwimSchoolDbContext db, CancellationToken cancellationToken = default)
     {
@@ -57,17 +57,18 @@ public static class DevelopmentDataSeeder
                 group.Lessons.Add(new Lesson
                 {
                     StartTime = today.AddDays(offset).AddHours(15),
-                    TookPlace = false,
+                    TookPlace = offset < 0,
                     IsMakeup = false
                 });
             }
         }
 
+        // Attendance only for past lessons; future lessons stay editable
         // student3 is absent from the first 3 lessons of "Advanced"
         foreach (var enrollment in enrollments)
         {
             var lessonIndex = 0;
-            foreach (var lesson in enrollment.Group.Lessons)
+            foreach (var lesson in enrollment.Group.Lessons.Where(l => l.TookPlace))
             {
                 var wasPresent = !(enrollment.Student == student3 && lessonIndex < 3);
                 enrollment.Attendances.Add(new Attendance { Lesson = lesson, WasPresent = wasPresent });

@@ -11,4 +11,5 @@ public sealed record StudentGroupDto
     public int Year { get; init; }
     public decimal AmountDue { get; init; }
     public decimal AmountPaid { get; init; }
+    public int AbsencesCount { get; init; }
 }
